@@ -1,14 +1,16 @@
+import { TAcademicManagement } from "../../../type/academicManagement.type";
+import { TResponseRedux } from "../../../type/global";
 import { baseApi } from "../../api/baseApi";
 
 const academicManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllSemester: builder.query({
       query: () => ({
-        url: "/academic-semester",
+        url: "/academic-semesters",
         method: "GET",
       }),
       // get limited data using transformResponse
-      transformResponse: (response) => {
+      transformResponse: (response: TResponseRedux<TAcademicManagement[]>) => {
         // console.log(response);
         return {
           data: response?.data,
