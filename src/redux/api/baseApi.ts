@@ -9,6 +9,7 @@ import {
 import { RootState } from "../store";
 import { logOut, setUser } from "../features/auth/authSlice";
 import { toast } from "sonner";
+import { TError } from "../../type/global";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:5000/api/v1",
@@ -21,17 +22,20 @@ const baseQuery = fetchBaseQuery({
     return headers;
   },
 });
+// custom base query
 const baseQueryWithRefreshToken: BaseQueryFn<
   FetchArgs,
   BaseQueryApi,
   DefinitionType
 > = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
-  if (result?.error?.status === 404) {
-    toast.error("This User not found");
+  
+  const error = result?.error as TError;
+  if (error?.status === 404) {
+    toast.error(error?.data?.message);
   }
+  // generate refresh token
   if (result?.error?.status === 401) {
-    //* Send Refresh token
     const res = await fetch("http://localhost:5000/api/v1/auth/refresh-token", {
       method: "POST",
       credentials: "include",
