@@ -1,18 +1,19 @@
 import { Table, TableColumnsType, TableProps } from "antd";
 import { useGetAllSemesterQuery } from "../../../redux/features/admin/academicManagement.api";
+import { useState } from "react";
 interface TDataType {
-  _id: string;
   name: string;
   year: string;
   startMonth: string;
   endMonth: string;
 }
 const AcademicSemester = () => {
-  const { data: semesterData } = useGetAllSemesterQuery(undefined);
+  const [params, setParams] = useState([]);
+  const { data: semesterData } = useGetAllSemesterQuery(params);
 
   const tableData = semesterData?.data?.map(
     ({ _id, name, year, startMonth, endMonth }) => ({
-      _id,
+      key: _id,
       name,
       year,
       startMonth,
@@ -24,42 +25,36 @@ const AcademicSemester = () => {
     {
       title: "Name",
       dataIndex: "name",
+      key: "name",
       showSorterTooltip: { target: "full-header" },
       filters: [
         {
-          text: "Joe",
-          value: "Joe",
+          text: "Autumn",
+          value: "Autumn",
         },
         {
-          text: "Jim",
-          value: "Jim",
+          text: "Summer",
+          value: "Summer",
         },
         {
-          text: "Submenu",
-          value: "Submenu",
-          children: [
-            {
-              text: "Green",
-              value: "Green",
-            },
-            {
-              text: "Black",
-              value: "Black",
-            },
-          ],
+          text: "Fall",
+          value: "Fall",
         },
       ],
     },
     {
       title: "Year",
+      key: "year",
       dataIndex: "year",
     },
     {
       title: "Start Month",
+      key: "startMonth",
       dataIndex: "startMonth",
     },
     {
       title: "End Month",
+      key: "enfMonth",
       dataIndex: "endMonth",
     },
   ];
@@ -70,7 +65,13 @@ const AcademicSemester = () => {
     sorter,
     extra
   ) => {
-    console.log("params", pagination, filters, sorter, extra);
+    if (extra.action === "filter") {
+      const filterArray = [];
+      filters.name?.forEach((item) => {
+        filterArray.push({ name: item, value: item });
+      });
+      setParams(filterArray);
+    }
   };
   return (
     <Table
