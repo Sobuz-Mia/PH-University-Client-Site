@@ -1,4 +1,4 @@
-export type TAcademicManagement = {
+export type TAdmissionSemester = {
   _id: string;
   name: string;
   year: string;
@@ -7,4 +7,22 @@ export type TAcademicManagement = {
   endMonth: string;
   createdAt: string;
   updatedAt: string;
+  __v: number;
+};
+
+export type TAcademicDepartment = {
+  _id: string;
+  name: string;
+  academicFaculty: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+
+export type TAcademicFaculty = {
+  _id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 };
