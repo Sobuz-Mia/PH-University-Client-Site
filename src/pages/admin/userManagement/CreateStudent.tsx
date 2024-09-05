@@ -4,55 +4,82 @@ import PHInput from "./../../../components/form/PHInput";
 import { FieldValues, SubmitErrorHandler } from "react-hook-form";
 import PHSelect from "../../../components/form/PHSelect";
 import { bloodGroupOptions, genderOptions } from "../../../constants/global";
+import PHDatePicker from "../../../components/form/PHDatePicker";
+import {
+  useGetAcademicDepartmentQuery,
+  useGetAllSemesterQuery,
+} from "../../../redux/features/admin/academicManagement.api";
+import { useAddStudentMutation } from "../../../redux/features/admin/userManagement.api";
 
 const studentData = {
-  password: "student123",
-  student: {
-    // personal info
-    name: {
-      firstName: "Student2",
-      middleName: "",
-      lastName: "sobuj",
-    },
-    dateOfBirth: "2000-01-01",
-    bloodGroup: "B+",
-    gender: "Male",
-    // contact info
-    email: "sobuj2@example.com",
-    contactNo: "123-456-7890",
-    emergencyContactNo: "098-765-4321",
-    presentAddress: "123 Main St, Cityville, Country",
-    permanentAddress: "456 Elm St, Townsville, Country",
-    // guardian info
-    guardian: {
-      fatherName: "Michael Doe",
-      fatherOccupation: "Engineer",
-      fatherContactNo: "111-222-3333",
-      motherName: "Jane Doe",
-      motherOccupation: "Teacher",
-      motherContactNo: "444-555-6666",
-    },
-    // local guardian
-    localGuardian: {
-      name: "Uncle Bob",
-      occupation: "Doctor",
-      contactNo: "777-888-9999",
-      address: "789 Pine St, Villageville, Country",
-    },
-    // academic Info
-    admissionSemester: "666dcf7c7ef6bb1fe26c3c48",
-    academicDepartment: "6671ebc3e6efabde5d100ce8",
-
-    isActive: "active",
+  // personal info
+  name: {
+    firstName: "Student",
+    middleName: "",
+    lastName: "sobuj",
   },
+  dateOfBirth: "2000-01-01",
+  bloodGroup: "B+",
+  gender: "Male",
+  // contact info
+  email: "sobuj@example.com",
+  contactNo: "123-456-7890",
+  emergencyContactNo: "098-765-4321",
+  presentAddress: "123 Main St, Cityville, Country",
+  permanentAddress: "456 Elm St, Townsville, Country",
+  // guardian info
+  guardian: {
+    fatherName: "Michael Doe",
+    fatherOccupation: "Engineer",
+    fatherContactNo: "111-222-3333",
+    motherName: "Jane Doe",
+    motherOccupation: "Teacher",
+    motherContactNo: "444-555-6666",
+  },
+  // local guardian
+  localGuardian: {
+    name: "Uncle Bob",
+    occupation: "Doctor",
+    contactNo: "777-888-9999",
+    address: "789 Pine St, Villageville, Country",
+  },
+  // academic Info
+  // admissionSemester: "666dcf7c7ef6bb1fe26c3c48",
+  // academicDepartment: "6671ebc3e6efabde5d100ce8",
 };
 
 const CreateStudent = () => {
-  const onSubmit: SubmitErrorHandler<FieldValues> = (data) => {
-    console.log(data);
+  const [addStudent, { data: dStudent, error }] = useAddStudentMutation();
+  console.log(dStudent);
+  console.log(error);
+  // get all data for semester and department
+  const { data: sData, isLoading: sLoading } =
+    useGetAllSemesterQuery(undefined);
+  const { data: dData, isLoading: dLoading } =
+    useGetAcademicDepartmentQuery(undefined);
 
-    // const formData = new FormData();
-    // formData.append("data", JSON.stringify(data));
+  // create semester options
+  const semesterOptions = sData?.data?.map((item) => ({
+    value: item?._id,
+    label: `${item?.name} ${item?.year}`,
+  }));
+
+  // create department options
+  const departmentOptions = dData?.data?.map((item) => ({
+    value: item?._id,
+    label: item?.name,
+  }));
+  const onSubmit: SubmitErrorHandler<FieldValues> = (data) => {
+    const studentData = {
+      password: "student123",
+      student: data,
+    };
+
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(studentData));
+
+    addStudent(formData);
+
     //! This is for development
     //! just for checking
     // console.log(Object.fromEntries(formData));
@@ -60,7 +87,7 @@ const CreateStudent = () => {
   return (
     <Row>
       <Col span={24}>
-        <PHForm onSubmit={onSubmit}>
+        <PHForm onSubmit={onSubmit} defaultValues={studentData}>
           <Divider>Personal Info.</Divider>
           <Row gutter={8}>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
@@ -77,7 +104,7 @@ const CreateStudent = () => {
               <PHInput type="text" name="name.lastName" label="Last Name" />
             </Col>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-              <PHInput type="text" name="dataOfBirth" label="Date Of Birth" />
+              <PHDatePicker name="dataOfBirth" label="Date Of Birth" />
             </Col>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
               <PHSelect options={genderOptions} name="gender" label="Gender" />
@@ -198,15 +225,17 @@ const CreateStudent = () => {
           <Divider>Academic Info</Divider>
           <Row gutter={8}>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-              <PHInput
-                type="text"
+              <PHSelect
+                options={semesterOptions}
+                disabled={sLoading}
                 name="admissionSemester"
                 label="Academic Semester"
               />
             </Col>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-              <PHInput
-                type="text"
+              <PHSelect
+                options={departmentOptions}
+                disabled={dLoading}
                 name="academicDepartment"
                 label="Academic Department"
               />
