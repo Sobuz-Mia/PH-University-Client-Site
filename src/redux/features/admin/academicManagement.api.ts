@@ -1,4 +1,4 @@
-import { TAdmissionSemester } from "../../../type/academicManagement.type";
+import { TAcademicSemester } from "../../../type/academicManagement.type";
 import { TQueryParam, TResponseRedux } from "../../../type/global";
 import { baseApi } from "../../api/baseApi";
 
@@ -19,7 +19,7 @@ const academicManagementApi = baseApi.injectEndpoints({
         };
       },
       // get limited data using transformResponse
-      transformResponse: (response: TResponseRedux<TAdmissionSemester[]>) => {
+      transformResponse: (response: TResponseRedux<TAcademicSemester[]>) => {
         // console.log(response);
         return {
           data: response?.data,
@@ -33,7 +33,7 @@ const academicManagementApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       // get limited data using transformResponse
-      transformResponse: (response: TResponseRedux<TAdmissionSemester[]>) => {
+      transformResponse: (response: TResponseRedux<TAcademicSemester[]>) => {
         // console.log(response);
         return {
           data: response?.data,
