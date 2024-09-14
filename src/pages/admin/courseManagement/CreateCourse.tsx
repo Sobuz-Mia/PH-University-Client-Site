@@ -9,6 +9,7 @@ import {
   useGetAllCoursesQuery,
 } from "../../../redux/features/admin/courseManagement.api";
 import { TResponse } from "../../../type/global";
+import { TCourse } from "../../../type";
 
 const CreateCourse = () => {
   const [createCourse] = useAddCoursesMutation();
@@ -25,10 +26,12 @@ const CreateCourse = () => {
       isDeleted: false,
       code: Number(data?.code),
       credits: Number(data?.credits),
-      preRequisiteCourses: data?.preRequisiteCourses?.map((item) => ({
-        course: item,
-        isDeleted: false,
-      })),
+      preRequisiteCourses: data?.preRequisiteCourses
+        ? data?.preRequisiteCourses?.map((item: Partial<TCourse>) => ({
+            course: item,
+            isDeleted: false,
+          }))
+        : [],
     };
     try {
       const res = (await createCourse(courseData)) as TResponse<any>;
@@ -37,7 +40,6 @@ const CreateCourse = () => {
       } else {
         toast.success(res?.data?.message, { id: toastId });
       }
-      console.log(res);
     } catch (err) {
       toast.error("Something want wrong", { id: toastId });
     }

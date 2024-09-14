@@ -1,4 +1,4 @@
-import { TRegisteredSemester } from "../../../type";
+import { TCourse, TRegisteredSemester } from "../../../type";
 import { TQueryParam, TResponseRedux } from "../../../type/global";
 import { baseApi } from "../../api/baseApi";
 
@@ -44,7 +44,7 @@ const courseManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["course"],
       // get limited data using transformResponse
-      transformResponse: (response: TResponseRedux<any>) => {
+      transformResponse: (response: TResponseRedux<TCourse[]>) => {
         // console.log(response);
         return {
           data: response?.data,
